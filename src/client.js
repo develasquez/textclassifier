@@ -4,18 +4,7 @@ const trainController = require('./controllers/train');
 const PORT = 50051;
 const server = new grpc.Server();
 trainModel.getModel().then((model) => {
-    /*
-    server.addService(model.Train.service, {
-        setModel: trainController.setModel,
-        updateModel: trainController.updateModel
-    });
-    server.bind(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure());
-    server.start();*/
 
-    client(model);
-});
-
-function client(model) {
     var client = new model.Train(`104.197.113.13:443`,
         grpc.credentials.createInsecure());
 
@@ -32,4 +21,4 @@ function client(model) {
 
         console.log(`in ${time2 -  time1} ms` ,response);
     });
-}
+})

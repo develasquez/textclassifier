@@ -1,5 +1,5 @@
 
-FROM node:8
+FROM node:10
 
 ADD ./package.json /app/
 ADD ./protos/ /app/protos
