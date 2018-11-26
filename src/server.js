@@ -3,6 +3,16 @@ const trainModel = require('./models/train');
 const trainController = require('./controllers/train');
 const PORT = 50051;
 const server = new grpc.Server();
+
+
+const redis = require('redis');
+const REDISHOST = process.env.REDISHOST || '10.0.0.3';
+const REDISPORT = process.env.REDISPORT || 6379;
+
+const client = redis.createClient(REDISPORT, REDISHOST);
+client.on('connect', () => { console.log('Redis client connected'); });
+client.on('error', err => console.error('ERR:REDIS:', err));
+
 trainModel.getModel().then((model) => {
     server.addService(model.Train.service, {
         setModel: trainController.setModel,
@@ -11,22 +21,3 @@ trainModel.getModel().then((model) => {
     server.bind(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure());
     server.start();
 });
-
-function client(model) {
-    var client = new model.Train(`104.197.113.13:443`,
-        grpc.credentials.createInsecure());
-
-    const messages = model.messages;
-    const newModel = new messages.Model();
-    const entry = new messages.Entry();
-    entry.setComment("Hola2");
-    entry.setCategory("cat2");
-    newModel.setName("model1")
-    newModel.setEntriesList([entry, entry, entry]);
-    let time1 = new Date();
-    client.setModel(newModel.toObject(), (err, response) => {
-        let time2 = new Date();
-
-        console.log(`in ${time2 -  time1} ms` ,response);
-    });
-}
