@@ -1,0 +1,11 @@
+type: google.api.Service
+config_version: 3
+name: train.classifier.grpc.endpoints.beta-cli-aa360.cloud.goog
+title: train classifier
+apis:
+- name: train.Train
+usage:
+  rules:
+  # ListShelves methods can be called without an API Key.
+  - selector: train.Train.setModel
+    allow_unregistered_calls: true

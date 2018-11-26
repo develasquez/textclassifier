@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package train;
+
+service Train  {
+    rpc setModel (Model) returns (Response) {};
+    rpc updateModel (newEntry) returns (Response) {};
+}
+
+message newEntry {
+    string modelName = 1;
+    Entry entry = 2;
+
+}
+
+message Entry {
+    string comment = 1;
+    string category = 2;
+}
+
+message Model {
+    string name = 1;
+    repeated Entry entriesList = 2;
+}
+
+message Response {
+    int32 statusCode = 1;
+    string message = 2;
+}
