@@ -1,4 +1,9 @@
 #!/bin/bash
+
+if [ "$2" == "-e" ]; then
+    gcloud endpoints services deploy api.pb deployment/api_config.yaml
+fi
+
 # Publicamos la imagen en el registry del proyecto
 export PROJECT_ID=`gcloud config list | grep project | sed 's/project = //'`;
 
@@ -7,7 +12,6 @@ gcloud docker -- push -- gcr.io/$PROJECT_ID/textclassifier:1.0.$1;
 
 #Deployamos los pods
 
-gcloud endpoints services deploy api.pb deployment/api_config.yaml
 
 replaces="s/{.version}/$1/;";
 
