@@ -1,17 +1,19 @@
 /* eslint-disable */
-const redis = require('./redis');
-
 var localStorage = {
-    getItem: async function (key) {
-        return await redis.get(key);
+    items: {},
+    getItem: function(key) {
+        return localStorage.items[key];
     },
-    setItem: function (key, value) {
-        redis.set(key, value);
+    setItem: function(key, value) {
+        localStorage.items[key] = value;
+    },
+    clear: function() {
+        localStorage.items = {}
     }
-};
+};      
 
-var Bayes = (async function (Bayes) {
-    Array.prototype.unique = function () {
+var Bayes = (function(Bayes) {
+    Array.prototype.unique = function() {
         var u = {},
             a = [];
         for (var i = 0, l = this.length; i < l; ++i) {
@@ -23,35 +25,35 @@ var Bayes = (async function (Bayes) {
         }
         return a;
     }
-    var stemKey = function (stem, label) {
+    var stemKey = function(stem, label) {
         return '_Bayes::stem:' + stem + '::label:' + label;
     };
-    var docCountKey = function (label) {
+    var docCountKey = function(label) {
         return '_Bayes::docCount:' + label;
     };
-    var stemCountKey = function (stem) {
+    var stemCountKey = function(stem) {
         return '_Bayes::stemCount:' + stem;
     };
 
-    var log = function (text) {
+    var log = function(text) {
         console.log(text);
     };
 
-    var tokenize = function (text) {
-        text = (text.toString() + "").toLowerCase().replace(/\W/g, ' ').replace(/\s+/g, ' ').trim().split(' ').unique();
+    var tokenize = function(text) {
+        text = text.toLowerCase().replace(/\W/g, ' ').replace(/\s+/g, ' ').trim().split(' ').unique();
         return text;
     };
 
-    var getLabels = async function () {
-        var labels = await localStorage.getItem('_Bayes::registeredLabels');
+    var getLabels = function() {
+        var labels = localStorage.getItem('_Bayes::registeredLabels');
         if (!labels) labels = '';
-        return labels.split(',').filter(function (a) {
+        return labels.split(',').filter(function(a) {
             return a.length;
         });
     };
 
-    var registerLabel = async function (label) {
-        var labels = await getLabels();
+    var registerLabel = function(label) {
+        var labels = getLabels();
         if (labels.indexOf(label) === -1) {
             labels.push(label);
             localStorage.setItem('_Bayes::registeredLabels', labels.join(','));
@@ -59,12 +61,12 @@ var Bayes = (async function (Bayes) {
         return true;
     };
 
-    var stemLabelCount = async function (stem, label) {
-        var count = parseInt(await localStorage.getItem(stemKey(stem, label)));
+    var stemLabelCount = function(stem, label) {
+        var count = parseInt(localStorage.getItem(stemKey(stem, label)));
         if (!count) count = 0;
         return count;
     };
-    var stemInverseLabelCount = function (stem, label) {
+    var stemInverseLabelCount = function(stem, label) {
         var labels = getLabels();
         var total = 0;
         for (var i = 0, length = labels.length; i < length; i++) {
@@ -75,17 +77,17 @@ var Bayes = (async function (Bayes) {
         return total;
     };
 
-    var stemTotalCount = async function (stem) {
-        var count = parseInt(await localStorage.getItem(stemCountKey(stem)));
+    var stemTotalCount = function(stem) {
+        var count = parseInt(localStorage.getItem(stemCountKey(stem)));
         if (!count) count = 0;
         return count;
     };
-    var docCount = async function (label) {
-        var count = parseInt(await localStorage.getItem(docCountKey(label)));
+    var docCount = function(label) {
+        var count = parseInt(localStorage.getItem(docCountKey(label)));
         if (!count) count = 0;
         return count;
     };
-    var docInverseCount = function (label) {
+    var docInverseCount = function(label) {
         var labels = getLabels();
         var total = 0;
         for (var i = 0, length = labels.length; i < length; i++) {
@@ -95,33 +97,32 @@ var Bayes = (async function (Bayes) {
         }
         return total;
     };
-    var increment = async function (key) {
-        var count = parseInt(await localStorage.getItem(key));
+    var increment = function(key) {
+        var count = parseInt(localStorage.getItem(key));
         if (!count) count = 0;
         localStorage.setItem(key, parseInt(count) + 1);
         return count + 1;
     };
 
-    var incrementStem = function (stem, label) {
+    var incrementStem = function(stem, label) {
         increment(stemCountKey(stem));
         increment(stemKey(stem, label));
     };
 
-    var incrementDocCount = function (label) {
+    var incrementDocCount = function(label) {
         return increment(docCountKey(label));
     };
 
-    Bayes.train = function (text, label) {
+    Bayes.train = function(text, label) {
         registerLabel(label);
         var words = tokenize(text);
         var length = words.length;
         for (var i = 0; i < length; i++)
             incrementStem(words[i], label);
         incrementDocCount(label);
-        return true;
     };
 
-    Bayes.guess = async function (text) {
+    Bayes.guess = function(text) {
         var words = tokenize(text);
         var length = words.length;
         var labels = getLabels();
@@ -168,7 +169,7 @@ var Bayes = (async function (Bayes) {
         return scores;
     };
 
-    Bayes.extractWinner = async function (scores) {
+    Bayes.extractWinner = function(scores) {
         var bestScore = 0;
         var bestLabel = null;
         for (var label in scores) {
@@ -186,11 +187,8 @@ var Bayes = (async function (Bayes) {
     return Bayes;
 })(Bayes || {});
 
-module.exports = {
-    init: async () => {
-        await redis.init();
-        return Bayes;
-    }
-};
+localStorage.clear();
+
+module.exports = Bayes;
 
 /* eslint-enable */
