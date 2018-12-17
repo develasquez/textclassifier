@@ -15,13 +15,14 @@ async function main() {
         server.bind(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure());
         server.start();
 
-        //const bayes = Bayes.init();
+        
+        const bayes = await Bayes.init();
 
-        data.forEach((d) => {
-            Bayes.train(d.comentario, d.categoria);
+        data.forEach(async (d) => {
+            await bayes.train(d.comentario, d.categoria);
         });
-        const scores = Bayes.guess("No esta claro el proceso para realizar el cambio");
-        const winner = Bayes.extractWinner(scores);
+        const scores = bayes.guess("No esta claro el proceso para realizar el cambio");
+        const winner = bayes.extractWinner(scores);
         console.log({
             comentario: "Error del sistema",
             categoria: winner.label
