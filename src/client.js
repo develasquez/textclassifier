@@ -1,6 +1,7 @@
 const grpc = require('grpc');
 const trainModel = require('./models/train');
 const trainController = require('./controllers/train');
+const data = require('./data.json');
 const PORT = 50051;
 const server = new grpc.Server();
 trainModel.getModel().then((model) => {
@@ -10,11 +11,19 @@ trainModel.getModel().then((model) => {
 
     const messages = model.messages;
     const newModel = new messages.Model();
-    const entry = new messages.Entry();
-    entry.setComment("Hola2");
-    entry.setCategory("cat2");
-    newModel.setName("model1")
-    newModel.setEntriesList([entry, entry, entry]);
+    
+    const trainModel = [];
+
+    data.forEach(element => {
+        const entry = new messages.Entry();
+        entry.setComment(element.comentario);
+        entry.setCategory(element.categoria);
+        trainModel.push(entry);
+    });
+    
+    newModel.setName("selfprotection")
+
+    newModel.setEntriesList(trainModel);
     let time1 = new Date();
     client.setModel(newModel.toObject(), (err, response) => {
         let time2 = new Date();
