@@ -82,6 +82,7 @@ const Train = {
 
         redis.get(modelName).then((strTrainedModel) => {
             const entry = new Object(trainModel.entry);
+            console.log(strTrainedModel);
             const scores = bayes.guess(text, JSON.parse(strTrainedModel));
             const winner = bayes.extractWinner(scores);
             console.log({

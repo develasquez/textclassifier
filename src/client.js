@@ -17,20 +17,20 @@ trainModel.getModel().then((model) => {
         text.setModelname(catallog);
         text.setText(process.argv[3]);
         let time1 = new Date();
-        //client.train(newModel.toObject(), (err, response) => {
-        //  console.log(err);
-        //  console.log(response);
-        client.classify({ modelName: 'selfprotection', text: 'No me gusta que me atrasen los vuelos' }, (err, response) => {
+        client.train(newModel.toObject(), (err, response) => {
             console.log(err);
             console.log(response);
-            let time2 = new Date();
-            console.log(`in ${time2 - time1} ms`, response);
+            client.classify({ modelName: 'selfprotection', text: 'No me gusta que me atrasen los vuelos' }, (err, response) => {
+                console.log(err);
+                console.log(response);
+                let time2 = new Date();
+                console.log(`in ${time2 - time1} ms`, response);
+            });
         });
-        //});
     }
     catch (ex) {
         console.log(ex);
-     }
+    }
 })
 /*
     const messages = model.messages;
