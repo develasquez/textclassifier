@@ -18,8 +18,10 @@ trainModel.getModel().then((model) => {
     let time1 = new Date();
     client.train(newModel.toObject(), (err, response) => {
         console.log(err);
-        debugger;
+        console.log(response);
         client.classify(text.toObject(), (err, response) => {
+            console.log(err);
+            console.log(response);
             let time2 = new Date();
             console.log(`in ${time2 - time1} ms`, response);
         });

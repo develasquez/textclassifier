@@ -7,5 +7,5 @@ apis:
 usage:
   rules:
   # ListShelves methods can be called without an API Key.
-  - selector: train.Train.setModel
+  - selector: "*"
     allow_unregistered_calls: true

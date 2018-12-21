@@ -3,6 +3,7 @@ const trainModel = require('./models/train');
 const trainController = require('./controllers/train');
 const PORT = 50051;
 const server = new grpc.Server();
+const redis = require("./controllers/redis");
 
 async function main() {
     trainModel.getModel().then(async (model) => {
@@ -13,7 +14,11 @@ async function main() {
             classify: trainController.classify
         });
         server.bind(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure());
-        server.start();
+        redis.init().then(() => {
+            server.start();
+            console.log("Server is running");
+        });
+        
     });
 }
 

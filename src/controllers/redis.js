@@ -47,5 +47,6 @@ async function get(key) {
 module.exports = {
     get,
     set,
-    init
+    init,
+    client
 }

@@ -2,7 +2,7 @@ const Datastore = require('@google-cloud/datastore');
 const trainModel = require('../models/train');
 const lib = require('./bayes');
 const datastore = Datastore();
-
+const redis = require("./redis");
 const Train = {
     setModel: (call, callback) => {
         const response = {};
@@ -42,6 +42,7 @@ const Train = {
         }
     },
     train: (call, callback) => {
+        console.log("train");
         const response = new Object(trainModel.response);
         const modelName = call.request.name;
         try {
@@ -50,17 +51,16 @@ const Train = {
 
             datastore.runQuery(query)
                 .then((results) => {
-                    redis.init().then(() => {
-                        const bayes = lib.Bayes;
-                        results.forEach(async (d) => {
-                            bayes.train(d.comentario, d.categoria);
-                        });
-                        const trainedModel = lib.localStorage.items;
-                        redis.set(modelName, JSON.stringify(trainedModel)).then(() => {
-                            response.statusCode = 200;
-                            response.message = 'Trained Success';
-                            callback(null, response);
-                        });
+                    console.log(results);
+                    const bayes = lib.Bayes;
+                    results.forEach(async (d) => {
+                        bayes.train(d.comentario, d.categoria);
+                    });
+                    const trainedModel = lib.localStorage.items;
+                    redis.set(modelName, JSON.stringify(trainedModel)).then(() => {
+                        response.statusCode = 200;
+                        response.message = 'Trained Success';
+                        callback(null, response);
                     });
                 });
         }
@@ -72,6 +72,8 @@ const Train = {
 
     },
     classify: (call, callback) => {
+        console.log("Classify");
+        const bayes = lib.Bayes;
         const modelName = call.request.modelName;
         const text = call.request.text;
 
@@ -86,7 +88,6 @@ const Train = {
             response.statusCode = 200;
             response.message = winner.label;
             callback(null, response);
-
         });
     }
 }
