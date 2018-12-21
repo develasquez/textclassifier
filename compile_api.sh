@@ -11,6 +11,4 @@ protoc \
 echo "api.pb file was created";
 
 
-protoc 	--proto_path=protos \
-		--js_out=import_style=commonjs,binary:src/models \
-		train_rest.proto;
+protoc 	--proto_path=protos --js_out=import_style=commonjs,binary:src/models train.proto;
