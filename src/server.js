@@ -1,9 +1,10 @@
 const grpc = require('grpc');
 const trainModel = require('./models/train');
 const trainController = require('./controllers/train');
+const redis = require("./controllers/redis");
 const PORT = 50051;
 const server = new grpc.Server();
-const redis = require("./controllers/redis");
+
 
 async function main() {
     trainModel.getModel().then(async (model) => {

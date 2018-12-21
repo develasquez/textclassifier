@@ -53,7 +53,7 @@ const Train = {
                 .then((results) => {
                     console.log(results);
                     const bayes = lib.Bayes;
-                    results.forEach(async (d) => {
+                    results[0].forEach(async (d) => {
                         bayes.train(d.comentario, d.categoria);
                     });
                     const trainedModel = lib.localStorage.items;

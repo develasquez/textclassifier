@@ -8,7 +8,7 @@ if [ "$2" == "-d" ] || [ "$3" == "-d" ]; then
     # Publicamos la imagen en el registry del proyecto
     export PROJECT_ID=`gcloud config list | grep project | sed 's/project = //'`;
 
-    docker build -t "gcr.io/$PROJECT_ID/textclassifier:1.0.$1" -f Dockerfile .;
+    docker build --no-cache -t "gcr.io/$PROJECT_ID/textclassifier:1.0.$1" -f Dockerfile .;
     gcloud docker -- push -- gcr.io/$PROJECT_ID/textclassifier:1.0.$1;
 fi
 
