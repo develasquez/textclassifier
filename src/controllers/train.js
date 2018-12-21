@@ -3,6 +3,7 @@ const trainModel = require('../models/train');
 const lib = require('./bayes');
 const datastore = Datastore();
 const redis = require("./redis");
+
 const Train = {
     setModel: (call, callback) => {
         const response = {};
@@ -11,8 +12,9 @@ const Train = {
                 datastore.save({
                     key: datastore.key(call.request.name, 'entries'),
                     data: e
-                }).then((a, b) => { console.log(a, b) })
-                    .catch((a, b) => { console.log(a, b) });
+                })
+                .then((a, b) => { console.log(a, b) })
+                .catch((a, b) => { console.log(a, b) });
             });
             response.statusCode = 200;
             response.message = 'Success';
@@ -74,6 +76,7 @@ const Train = {
     classify: (call, callback) => {
         console.log("Classify");
         const bayes = lib.Bayes;
+        console.log(call.request);
         const modelName = call.request.modelName;
         const text = call.request.text;
 

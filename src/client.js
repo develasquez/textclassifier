@@ -20,7 +20,7 @@ trainModel.getModel().then((model) => {
         //client.train(newModel.toObject(), (err, response) => {
         //  console.log(err);
         //  console.log(response);
-        client.classify(text.toObject(), (err, response) => {
+        client.classify({ modelName: 'selfprotection', text: 'No me gusta que me atrasen los vuelos' }, (err, response) => {
             console.log(err);
             console.log(response);
             let time2 = new Date();
