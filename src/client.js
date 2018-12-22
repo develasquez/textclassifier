@@ -16,6 +16,7 @@ trainModel.getModel().then((model) => {
             console.log(response);
             let time2 = new Date();
             console.log(`in ${time2 - time1} ms`, response);
+            process.exit(0)
         });
     }
     catch (ex) {
