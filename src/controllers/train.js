@@ -13,8 +13,8 @@ const Train = {
                     key: datastore.key(call.request.name, 'entries'),
                     data: e
                 })
-                .then((a, b) => { console.log(a, b) })
-                .catch((a, b) => { console.log(a, b) });
+                    .then((a, b) => { console.log(a, b) })
+                    .catch((a, b) => { console.log(a, b) });
             });
             response.statusCode = 200;
             response.message = 'Success';
@@ -84,17 +84,25 @@ const Train = {
         const bayes = lib.Bayes;
         const modelName = call.request.modelName;
         const text = call.request.text;
-        redis.get(modelName).then((strTrainedModel) => {
-            const scores = bayes.guess(text, JSON.parse(strTrainedModel));
-            const winner = bayes.extractWinner(scores);
-            let time2 = new Date();
-            console.log(`Classified in ${time2 - time1} ms`);
-            callback(null, {
-                comment: text,
-                category: winner.label
+        redis.get(modelName)
+            .then((strTrainedModel) => {
+                try {
+                    const scores = bayes.guess(text, JSON.parse(strTrainedModel));
+                    const winner = bayes.extractWinner(scores);
+                    let time2 = new Date();
+                    console.log(`Classified in ${time2 - time1} ms`);
+                    callback(null, {
+                        comment: text,
+                        category: winner.label
+                    });
+                }
+                catch (ex) {
+                    callback(ex, null);
+                }
+            })
+            .catch((ex) => {
+                callback(ex, null);
             });
-            
-        });
     }
 }
 
