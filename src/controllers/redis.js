@@ -22,23 +22,30 @@ async function init() {
 
 async function set(key, value) {
     return new Promise((resolve, reject) => {
+        let time1 = new Date();
         client.set(key, value, (err, data) => {
             if (err) {
                 reject(err);
                 return;
             }
+            let time2 = new Date();
+            console.log(`Redis Get in ${time2 - time1} ms`, response);
             resolve(data);
         });
     });
 }
 
 async function get(key) {
+    
     return new Promise((resolve, reject) => {
+        let time1 = new Date();
         client.get(key, (err, data) => {
             if (err) {
                 reject(err);
                 return;
             }
+            let time2 = new Date();
+            console.log(`Redis Get in ${time2 - time1} ms`, response);
             resolve(data);
         });
     });

@@ -45,6 +45,7 @@ const Train = {
     },
     train: (call, callback) => {
         console.log("train");
+        let time1 = new Date();
         const response = new Object(trainModel.response);
         const modelName = call.request.name;
         console.log(call.request);
@@ -54,7 +55,8 @@ const Train = {
 
             datastore.runQuery(query)
                 .then((results) => {
-                    console.log(results);
+                    let time2 = new Date();
+                    console.log(`Db Read in ${time2 - time1} ms`, response);
                     const bayes = lib.Bayes;
                     results[0].forEach(async (d) => {
                         bayes.train(d.comment, d.category);
@@ -63,6 +65,8 @@ const Train = {
                     redis.set(modelName, JSON.stringify(trainedModel)).then(() => {
                         response.statusCode = 200;
                         response.message = 'Trained Success';
+                        time2 = new Date();
+                        console.log(`Model trained in ${time2 - time1} ms`, response);
                         callback(null, response);
                     });
                 });
@@ -76,24 +80,22 @@ const Train = {
     },
     classify: (call, callback) => {
         console.log("Classify");
+        let time1 = new Date();
         const bayes = lib.Bayes;
-        console.log(call.request);
         const modelName = call.request.modelName;
         const text = call.request.text;
-
         redis.get(modelName).then((strTrainedModel) => {
             const scores = bayes.guess(text, JSON.parse(strTrainedModel));
             const winner = bayes.extractWinner(scores);
+            let time2 = new Date();
+            console.log(`Classified in ${time2 - time1} ms`, response);
             callback(null, {
                 comment: text,
                 category: winner.label
             });
+            
         });
     }
 }
 
 module.exports = Train;
-
-/*
-                "trainedModel"
-                */
