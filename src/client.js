@@ -9,15 +9,16 @@ trainModel.getModel().then((model) => {
     try {
         var client = new model.Train(`${SERVER}`,
             grpc.credentials.createInsecure());
-        let time1 = new Date();
-        console.log(time1);
-        client.classify({ modelName: process.argv[2], text: process.argv[3] }, (err, response) => {
-            console.log(err);
-            console.log(response);
-            let time2 = new Date();
-            console.log(`in ${time2 - time1} ms`, response);
-            process.exit(0)
-        });
+            let time1, time2;
+        for (let index = 0; index < 10; index++) {
+            time1 = new Date();
+            client.classify({ modelName: process.argv[2], text: process.argv[3] }, (err, response) => {
+                console.log(err);
+                console.log(response);
+                time2 = new Date();
+                console.log(`Req in ${time2 - time1} ms`);
+            });            
+        }
     }
     catch (ex) {
         console.log(ex);
