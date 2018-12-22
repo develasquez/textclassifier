@@ -56,7 +56,7 @@ const Train = {
             datastore.runQuery(query)
                 .then((results) => {
                     let time2 = new Date();
-                    console.log(`Db Read in ${time2 - time1} ms`, response);
+                    console.log(`Db Read in ${time2 - time1} ms`);
                     const bayes = lib.Bayes;
                     results[0].forEach(async (d) => {
                         bayes.train(d.comment, d.category);
@@ -66,7 +66,7 @@ const Train = {
                         response.statusCode = 200;
                         response.message = 'Trained Success';
                         time2 = new Date();
-                        console.log(`Model trained in ${time2 - time1} ms`, response);
+                        console.log(`Model trained in ${time2 - time1} ms`);
                         callback(null, response);
                     });
                 });
@@ -88,7 +88,7 @@ const Train = {
             const scores = bayes.guess(text, JSON.parse(strTrainedModel));
             const winner = bayes.extractWinner(scores);
             let time2 = new Date();
-            console.log(`Classified in ${time2 - time1} ms`, response);
+            console.log(`Classified in ${time2 - time1} ms`);
             callback(null, {
                 comment: text,
                 category: winner.label

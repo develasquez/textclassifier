@@ -29,7 +29,7 @@ async function set(key, value) {
                 return;
             }
             let time2 = new Date();
-            console.log(`Redis Get in ${time2 - time1} ms`, response);
+            console.log(`Redis Get in ${time2 - time1} ms`);
             resolve(data);
         });
     });
@@ -45,7 +45,7 @@ async function get(key) {
                 return;
             }
             let time2 = new Date();
-            console.log(`Redis Get in ${time2 - time1} ms`, response);
+            console.log(`Redis Get in ${time2 - time1} ms`);
             resolve(data);
         });
     });
