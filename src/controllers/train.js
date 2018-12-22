@@ -47,16 +47,17 @@ const Train = {
         console.log("train");
         const response = new Object(trainModel.response);
         const modelName = call.request.name;
+        console.log(call.request);
         try {
             const query = datastore
-                .createQuery(modelName, 'entries');
+                .createQuery(modelName);
 
             datastore.runQuery(query)
                 .then((results) => {
                     console.log(results);
                     const bayes = lib.Bayes;
                     results[0].forEach(async (d) => {
-                        bayes.train(d.comentario, d.categoria);
+                        bayes.train(d.comment, d.category);
                     });
                     const trainedModel = lib.localStorage.items;
                     redis.set(modelName, JSON.stringify(trainedModel)).then(() => {
@@ -81,17 +82,12 @@ const Train = {
         const text = call.request.text;
 
         redis.get(modelName).then((strTrainedModel) => {
-            const entry = new Object(trainModel.entry);
-            console.log(strTrainedModel);
             const scores = bayes.guess(text, JSON.parse(strTrainedModel));
             const winner = bayes.extractWinner(scores);
-            console.log({
-                comentario: text,
-                categoria: winner.label
+            callback(null, {
+                comment: text,
+                category: winner.label
             });
-            response.statusCode = 200;
-            response.message = winner.label;
-            callback(null, response);
         });
     }
 }

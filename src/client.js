@@ -9,23 +9,12 @@ trainModel.getModel().then((model) => {
     try {
         var client = new model.Train(`${SERVER}`,
             grpc.credentials.createInsecure());
-        const messages = model.messages;
-        const newModel = new messages.Model();
-        const text = new messages.Text();
-        const catallog = process.argv[2];
-        newModel.setName(catallog)
-        text.setModelname(catallog);
-        text.setText(process.argv[3]);
         let time1 = new Date();
-        client.train(newModel.toObject(), (err, response) => {
+        client.classify({ modelName: process.argv[2], text: process.argv[3] }, (err, response) => {
             console.log(err);
             console.log(response);
-            client.classify({ modelName: 'selfprotection', text: 'No me gusta que me atrasen los vuelos' }, (err, response) => {
-                console.log(err);
-                console.log(response);
-                let time2 = new Date();
-                console.log(`in ${time2 - time1} ms`, response);
-            });
+            let time2 = new Date();
+            console.log(`in ${time2 - time1} ms`, response);
         });
     }
     catch (ex) {
