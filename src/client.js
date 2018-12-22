@@ -10,6 +10,7 @@ trainModel.getModel().then((model) => {
         var client = new model.Train(`${SERVER}`,
             grpc.credentials.createInsecure());
         let time1 = new Date();
+        console.log(time1);
         client.classify({ modelName: process.argv[2], text: process.argv[3] }, (err, response) => {
             console.log(err);
             console.log(response);
