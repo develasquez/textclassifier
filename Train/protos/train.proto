@@ -5,15 +5,9 @@ package train;
 service Train  {
     rpc setModel (Model) returns (Response) {};
     rpc updateModel (newEntry) returns (Response) {};
-    rpc trainAll (Empty) returns (Response) {};
     rpc train (Model) returns (Response) {};
-    rpc classify (Text) returns (Entry) {};
 }
 
-message Text {
-    string modelName = 1;
-    string text =2;
-}
 
 message Empty {}
 
@@ -26,6 +20,7 @@ message newEntry {
 message Entry {
     string comment = 1;
     string category = 2;
+    double score = 3;
 }
 
 message Model {

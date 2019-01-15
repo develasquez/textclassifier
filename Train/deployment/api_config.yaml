@@ -1,0 +1,11 @@
+type: google.api.Service
+config_version: 3
+name: trainer.grpc.endpoints.infra-terraform-plygrd.cloud.goog
+title: train models
+apis:
+- name: train.Train
+usage:
+  rules:
+  # ListShelves methods can be called without an API Key.
+  - selector: "*"
+    allow_unregistered_calls: true

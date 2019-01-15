@@ -2,13 +2,13 @@
 
 protoc \
 	--proto_path=protos \
-	--proto_path=googleapis/ \
+	--proto_path=../googleapis/ \
 	--include_imports \
 	--include_source_info \
 	--descriptor_set_out api.pb \
-	train.proto;
+	classify_rest.proto;
 	
 echo "api.pb file was created";
 
 
-protoc 	--proto_path=protos --js_out=import_style=commonjs,binary:src/models train.proto;
+protoc 	--proto_path=protos --js_out=import_style=commonjs,binary:src/models classify.proto;

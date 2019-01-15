@@ -1,0 +1,50 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: train-classifier
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: train-classifier
+    spec:
+      hostname: classifier
+      subdomain: train-classifier-svc
+      containers:
+      - name: esp
+        image: gcr.io/endpoints-release/endpoints-runtime:1
+        args: [
+          "--http_port=8080",
+          "--http2_port=9000",
+          "--backend=grpc://127.0.0.1:50051",
+          "--service=classifier.grpc.endpoints.infra-terraform-plygrd.cloud.goog",
+          "--rollout_strategy=managed",
+        ]
+        ports:
+          - containerPort: 8080
+          - containerPort: 9000
+      - name: node-classifier
+        image: gcr.io/infra-terraform-plygrd/textclassifier:1.0.{.version}
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "200m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 50051
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: classifier
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: classifier
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50

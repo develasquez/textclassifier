@@ -11,8 +11,7 @@ async function main() {
         server.addService(model.Train.service, {
             setModel: trainController.setModel,
             updateModel: trainController.updateModel,
-            train: trainController.train,
-            classify: trainController.classify
+            train: trainController.train
         });
         server.bind(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure());
         redis.init().then(() => {

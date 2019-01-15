@@ -62,6 +62,10 @@ const Train = {
                         bayes.train(d.comment, d.category);
                     });
                     const trainedModel = lib.localStorage.items;
+                    datastore.upsert({
+                        key: datastore.key(`${call.request.modelName}-trained` , 'entries'),
+                        data: {model: JSON.stringify(trainedModel)}
+                    });
                     redis.set(modelName, JSON.stringify(trainedModel)).then(() => {
                         response.statusCode = 200;
                         response.message = 'Trained Success';
@@ -77,32 +81,6 @@ const Train = {
             callback(ex, response);
         }
 
-    },
-    classify: (call, callback) => {
-        console.log("Classify");
-        let time1 = new Date();
-        const bayes = lib.Bayes;
-        const modelName = call.request.modelName;
-        const text = call.request.text;
-        redis.get(modelName)
-            .then((strTrainedModel) => {
-                try {
-                    const scores = bayes.guess(text, JSON.parse(strTrainedModel));
-                    const winner = bayes.extractWinner(scores);
-                    let time2 = new Date();
-                    console.log(`Classified in ${time2 - time1} ms`);
-                    callback(null, {
-                        comment: text,
-                        category: winner.label
-                    });
-                }
-                catch (ex) {
-                    callback(ex, null);
-                }
-            })
-            .catch((ex) => {
-                callback(ex, null);
-            });
     }
 }
 

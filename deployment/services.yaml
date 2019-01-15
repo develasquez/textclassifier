@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: train-classifier-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/grpc-backend: "true"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /train.Train
+        backend:
+          serviceName: train-classifier-svc
+          servicePort: train
+      - path: /train.Classify
+        backend:
+          serviceName: train-classifier-svc
+          servicePort: classify
+      - path: /classify
+        backend:
+          serviceName: train-classifier-svc
+          servicePort: http
+      - path: /bff
+        backend:
+          serviceName: train-classifier-svc
+          servicePort: bff
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:  
+  name: train-classifier-svc
+spec:
+  selector:    
+    app: train-classifier
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  - port: 50050
+    targetPort: 9000
+    protocol: TCP
+    name: train
+  - port: 50051
+    targetPort: 9001
+    protocol: TCP
+    name: classify
+  - port: 80
+    targetPort: 8081
+    protocol: TCP
+    name: bff
+  type: LoadBalancer  

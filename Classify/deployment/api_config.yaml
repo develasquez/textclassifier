@@ -1,9 +1,9 @@
 type: google.api.Service
 config_version: 3
-name: train.classifier.grpc.endpoints.beta-cli-aa360.cloud.goog
-title: train classifier
+name: classifier.grpc.endpoints.infra-terraform-plygrd.cloud.goog
+title: classifier
 apis:
-- name: train.Train
+- name: classify.Classify
 usage:
   rules:
   # ListShelves methods can be called without an API Key.

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+package classify;
+
+service Classify  {
+    rpc classify (Text) returns (Entry) {
+        option (google.api.http) = { 
+            get: "/classify"
+        };
+    };
+}
+
+message Text {
+    string modelName = 1;
+    string text =2;
+}
+
+message Entry {
+    string comment = 1;
+    string category = 2;
+    double score = 3;
+}
